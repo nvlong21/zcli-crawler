@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package order.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+// Import user proto if you need to reference User message directly
+// import "infrastructure/grpc/users.proto"; // Adjust path if needed
+
+// Define the Order service
+service OrderService {
+  rpc CreateOrder (CreateOrderRequest) returns (OrderResponse) {}
+  rpc GetOrder (GetOrderRequest) returns (OrderResponse) {}
+  rpc ListOrders (ListOrdersRequest) returns (ListOrdersResponse) {}
+  rpc UpdateOrderStatus (UpdateOrderStatusRequest) returns (OrderResponse) {}
+  // rpc CancelOrder (CancelOrderRequest) returns (OrderResponse) {}
+}
+
+// --- Message Definitions ---
+message OrderItem {
+    string id = 1; // Unique ID for the order item itself
+    string product_id = 2;
+    int32 quantity = 3;
+    string unit_price = 4; // e.g., "19.99" - Use string for money
+    string description = 5; // Optional product description snapshot
+}
+
+message Order {
+  string id = 1; // UUID or string ID
+  string user_id = 2; // ID of the user who placed the order
+  repeated OrderItem items = 3; // List of items in the order
+  string total_amount = 4; // e.g., "123.45" (calculated server-side)
+  string currency_code = 5; // e.g., "USD", "EUR"
+  string status = 6; // e.g., "PENDING", "PROCESSING", "COMPLETED", "CANCELLED", "REFUNDED"
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  // Address shipping_address = 9; // Example nested message
+}
+
+message CreateOrderRequest {
+  string user_id = 1;
+  message ItemInput { string product_id = 1; int32 quantity = 2; }
+  repeated ItemInput items = 2;
+  string currency_code = 3; // Currency for the order
+  // string idempotency_key = 4;
+}
+
+message GetOrderRequest { string id = 1; }
+
+message OrderResponse { Order order = 1; }
+
+message ListOrdersRequest {
+  optional string user_id = 1;
+  optional string status = 2;
+  int32 page_size = 10;
+  string page_token = 11;
+}
+
+message ListOrdersResponse {
+  repeated Order orders = 1;
+  string next_page_token = 2;
+}
+
+message UpdateOrderStatusRequest {
+  string id = 1; // Order ID
+  string new_status = 2; // Target status
+  // optional string reason = 3;
+}

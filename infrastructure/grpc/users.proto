@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto"; // For partial updates
+
+// Define the User service
+service UserService {
+  rpc CreateUser (CreateUserRequest) returns (UserResponse) {}
+  rpc GetUser (GetUserRequest) returns (UserResponse) {}
+  rpc GetUserByEmail (GetUserByEmailRequest) returns (UserResponse) {}
+  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {}
+  rpc UpdateUser (UpdateUserRequest) returns (UserResponse) {}
+  rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty) {}
+}
+
+// --- Message Definitions ---
+message User {
+  string id = 1; // UUID as string
+  string username = 2;
+  string email = 3;
+  bool is_active = 4;
+  bool is_superuser = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  repeated string roles = 8;
+}
+
+message CreateUserRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3; // Sent for creation, hashed server-side
+  bool is_active = 4;
+  bool is_superuser = 5;
+  repeated string roles = 6;
+}
+
+message GetUserRequest { string id = 1; }
+message GetUserByEmailRequest { string email = 1; }
+message UserResponse { User user = 1; }
+
+message ListUsersRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  // optional bool is_active_filter = 3;
+}
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_page_token = 2;
+}
+
+message UpdateUserRequest {
+  string id = 1;
+  google.protobuf.FieldMask update_mask = 2; // Specifies fields to update
+  optional string username = 3;
+  optional string email = 4;
+  optional bool is_active = 5;
+  repeated string roles = 6; // Usually replace the whole list
+}
+message DeleteUserRequest { string id = 1; }

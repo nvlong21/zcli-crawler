@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package email.v1;
+
+import "google/protobuf/empty.proto"; // For potential future methods
+
+// Defines a simple email service contract.
+service EmailService {
+  // Sends an email asynchronously. Success indicates acceptance, not delivery.
+  rpc SendEmail (SendEmailRequest) returns (SendEmailResponse) {}
+
+  // Optional: Check status of a previously sent email (if service supports it)
+  // rpc CheckStatus (CheckStatusRequest) returns (CheckStatusResponse) {}
+}
+
+// Request message to send an email.
+message SendEmailRequest {
+  string to = 1; // Recipient email address
+  string subject = 2;
+  string body_html = 3; // Prefer HTML body
+  string body_text = 4; // Optional plain text version
+  string from_address = 5; // Optional: override default sender configured in service
+  // map<string, string> headers = 6; // Optional custom email headers
+  // repeated Attachment attachments = 7; // Optional attachments
+}
+
+// Response after attempting to send an email.
+message SendEmailResponse {
+  bool success = 1; // Indicates if the sending request was accepted by the service
+  string message_id = 2; // Optional unique ID assigned by the email service (for tracking)
+  string error_message = 3; // Optional error details if success is false (e.g., validation error)
+}
