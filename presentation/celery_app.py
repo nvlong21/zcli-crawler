@@ -1,0 +1,1 @@
+from features.audio_crawl.tasks.tasks import celery_app

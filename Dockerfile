@@ -1,6 +1,6 @@
 # --- Builder Stage ---
 # Use the target Python version passed as build argument
-ARG PYTHON_VERSION=3.9
+ARG PYTHON_VERSION=3.12
 FROM python:${PYTHON_VERSION}-slim as builder
 
 # Set environment variables for Python and Poetry
@@ -15,12 +15,12 @@ ENV POETRY_VIRTUALENVS_CREATE=false
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
 # Install build dependencies (if needed, e.g., for psycopg2 or C extensions)
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#     build-essential libpq-dev curl \
-#     && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libpq-dev curl ffmpeg\
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 - --version ${POETRY_VERSION}
+RUN curl -sSL https://install.python-poetry.org | python3 - --version ${POETRY_VERSION} && poetry --version
 
 WORKDIR /app
 
@@ -29,8 +29,9 @@ COPY poetry.lock pyproject.toml ./
 
 # Install production dependencies using Poetry
 # --no-root: Don't install the project package itself yet
-RUN poetry install --no-dev --no-root --sync
+RUN poetry install --only main --no-root --sync
 # Using --sync ensures the environment matches the lock file exactly
+CMD ["python"]
 
 # --- Runtime Stage ---
 FROM python:${PYTHON_VERSION}-slim as runtime
@@ -43,6 +44,7 @@ ENV ENVIRONMENT=production
 ENV APP_MODULE="presentation.main:app" 
 ENV HOST=0.0.0.0
 ENV PORT=8000
+ENV PYTHON_VERSION=3.12
 # Set PYTHONPATH=/app if imports fail, but non-src layout should work without it
 # ENV PYTHONPATH=/app
 
@@ -57,9 +59,17 @@ WORKDIR /app
 # Use VIRTUAL_ENV set by Poetry (might need adjustment based on Poetry version/config)
 # Default location within standard python images:
 COPY --from=builder /usr/local/lib/python${PYTHON_VERSION}/site-packages /usr/local/lib/python${PYTHON_VERSION}/site-packages
+COPY --from=builder /usr/bin/ffmpeg /usr/bin/ffmpeg
+COPY --from=builder /usr/local/bin/uvicorn /usr/local/bin/uvicorn
+COPY --from=builder /usr/local/bin/celery /usr/local/bin/celery
+# COPY --from=builder /usr/lib/x86_64-linux-gnu/libavdevice.so.59.7.100 /usr/lib/x86_64-linux-gnu/libavdevice.so.59.7.100
+# COPY --from=builder /usr/lib/x86_64-linux-gnu/libavdevice.so.59.7.100 /usr/lib/x86_64-linux-gnu/libavdevice.so.59.7.100
+# RUN ln -s /usr/lib/x86_64-linux-gnu/libavdevice.so.59.7.100 /usr/lib/x86_64-linux-gnu/libavdevice.so.59 && \
+#     ln -s /usr/lib/x86_64-linux-gnu/libavdevice.so.59 /usr/lib/x86_64-linux-gnu/libavdevice.so
 # Copy Poetry scripts if any dependencies install them globally (less common)
 # COPY --from=builder /opt/poetry/bin /usr/local/bin
-
+RUN apt-get update && apt-get install -y --no-install-recommends \
+     ffmpeg nodejs npm
 # Create a non-root user and group for security
 RUN addgroup --system app && adduser --system --ingroup app app
 

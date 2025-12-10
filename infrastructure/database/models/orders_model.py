@@ -12,7 +12,7 @@ from infrastructure.database.base_model import Base #, UUIDType
 # if TYPE_CHECKING:
 #     from .user_model import User # Import related model for type hinting
 
-class Uorders(Base):
+class Orders(Base):
     """SQLAlchemy ORM Model for the 'orders' table."""
     __tablename__ = "orders" # Database table name
 
@@ -30,4 +30,4 @@ class Uorders(Base):
     # owner: Mapped["User"] = relationship(back_populates="orders")
 
     def __repr__(self) -> str:
-        return f"<Uorders(id={self.id!r}, name={self.name!r})>"
+        return f"<Orders(id={self.id!r}, name={self.name!r})>"

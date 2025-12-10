@@ -5,14 +5,14 @@ from datetime import datetime
 
 # --- Optional Imports ---
 # Import Value Objects if used
-# from .value_objects import UordersAttribute
+# from .value_objects import OrdersAttribute
 
 # Import Base Domain Event class if using domain events
 # from infrastructure.bus.domain_event import DomainEvent # Example path
 
-class Uorders(BaseModel):
+class Orders(BaseModel):
     """
-    Domain Model representing a Uorders.
+    Domain Model representing a Orders.
     This class defines the structure and invariants for a orders.
     It should contain business logic specific to the entity itself.
     """
@@ -30,7 +30,7 @@ class Uorders(BaseModel):
     description: Optional[str] = Field(None, description="Optional description")
 
     # Example Value Object field
-    # attribute: UordersAttribute
+    # attribute: OrdersAttribute
 
     # Timestamps are often managed by the database/BaseModel,
     # but can be included if needed for domain logic or validation.
@@ -58,7 +58,7 @@ class Uorders(BaseModel):
         if new_name != self.name:
              self.name = new_name
              # Optionally register a domain event
-             # self.register_event(UordersNameChanged(id=self.id, new_name=new_name))
+             # self.register_event(OrdersNameChanged(id=self.id, new_name=new_name))
         return self
 
     # Add other methods embodying business logic specific to this entity...

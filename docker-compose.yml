@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  web:
+    build: ./
+    ports:
+      - 8008:8008
+    command: uvicorn presentation.main:app --host 0.0.0.0 --port 8008 --reload
+    volumes:
+      - ./:/usr/src/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  worker:
+    build: ./
+    command: celery -A presentation.celery_app.celery_app worker --loglevel=info 
+    # --logfile=logs/celery.log
+    volumes:
+      - ./:/usr/src/app
+    env_file:
+      - .env
+    depends_on:
+      - web
+      - redis
+
+  redis:
+    image: redis:7
+
+  dashboard:
+    build: ./
+    command: celery --broker=redis://redis:6379/0 flower --port=5555
+    ports:
+      - 5555:5555
+    env_file:
+      - .env
+    depends_on:
+      - web
+      - redis
+      - worker
+  postgres:
+    image: postgres:13
+    env_file:
+      - .env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432      
+    expose:
+      - "5432"
+
+volumes:
+  postgres-data:
+  redis-data:
+ 

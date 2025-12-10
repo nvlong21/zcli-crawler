@@ -29,7 +29,7 @@ except ImportError as e:
 try:
     print("[Migrations env.py] Importing detected models...")
     # Insert the generated import lines here
-    from infrastructure.database.models.orders_model import Uorders
+    from infrastructure.database.models.orders_model import Orders
     
     print("[Migrations env.py] Model imports completed.")
 except ImportError as e:

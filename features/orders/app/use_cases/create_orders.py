@@ -3,9 +3,9 @@ from uuid import UUID
 import logging
 
 # --- Domain Layer Imports ---
-from features.orders.domain.entities.orders import Uorders
+from features.orders.domain.entities.orders import Orders
 # Optional: Import domain services if needed by the use case
-# from features.orders.domain.services.orders_service import UordersDomainService
+# from features.orders.domain.services.orders_service import OrdersDomainService
 
 # --- Infrastructure Abstractions ---
 # Use AbstractUnitOfWork and BaseRepositoryInterface for dependency inversion
@@ -19,26 +19,26 @@ try: from infrastructure.utils.logging_config import logger
 except ImportError: logger = logging.getLogger(__name__)
 
 
-class CreateUordersUseCase:
+class CreateOrdersUseCase:
     """
-    Use Case for creating a new Uorders.
+    Use Case for creating a new Orders.
     Orchestrates domain logic and infrastructure interactions (repository, UoW).
     Receives input data (DTO), validates, interacts with domain, persists changes.
     """
     def __init__(
         self,
         # Type hint with the specific Domain Entity and its PK type (e.g., UUID)
-        repository: BaseRepositoryInterface[Any, Uorders], # PKType removed from Base Interface ref
+        repository: BaseRepositoryInterface[Any, Orders], # PKType removed from Base Interface ref
         uow: AbstractUnitOfWork,
         # Optional: Inject domain services if needed
-        # domain_service: UordersDomainService,
+        # domain_service: OrdersDomainService,
     ):
         self._repository = repository
         self._uow = uow
         # self._domain_service = domain_service # Store injected service
-        logger.debug(f"Initialized CreateUordersUseCase")
+        logger.debug(f"Initialized CreateOrdersUseCase")
 
-    async def execute(self, data: Dict[str, Any]) -> Uorders:
+    async def execute(self, data: Dict[str, Any]) -> Orders:
         """
         Executes the use case to create a orders.
 
@@ -46,7 +46,7 @@ class CreateUordersUseCase:
             data: Dictionary containing data for the new orders (e.g., from API schema).
 
         Returns:
-            The created Uorders domain entity, potentially updated with DB defaults.
+            The created Orders domain entity, potentially updated with DB defaults.
 
         Raises:
             UnprocessableEntityError: If input data fails domain validation.
@@ -54,13 +54,13 @@ class CreateUordersUseCase:
             Exception: For unexpected errors during persistence or domain logic.
         """
         log_extra = {"feature": "orders", "data_keys": list(data.keys())}
-        logger.info(f"Executing CreateUordersUseCase", extra=log_extra)
+        logger.info(f"Executing CreateOrdersUseCase", extra=log_extra)
 
         # 1. Validate Input & Create Domain Entity
         try:
             # Pydantic model handles initial validation.
             # Ensure ID generation strategy aligns (client vs DB). default_factory implies client-side.
-            new_entity = Uorders(**data)
+            new_entity = Orders(**data)
             logger.debug(f"Domain entity for orders created: {new_entity.id}", extra=log_extra)
         except Exception as e: # Catch Pydantic ValidationError, etc.
             logger.warning(f"Invalid data for creating orders: {e}", extra=log_extra)
@@ -74,7 +74,7 @@ class CreateUordersUseCase:
         # try:
         #      existing = await self._repository.find_by_name(new_entity.name) # type: ignore
         #      if existing:
-        #          msg = f"Uorders with name '{new_entity.name}' already exists."
+        #          msg = f"Orders with name '{new_entity.name}' already exists."
         #          logger.warning(msg, extra=log_extra)
         #          raise ConflictError(msg)
         # except AttributeError:
@@ -92,7 +92,7 @@ class CreateUordersUseCase:
                 # await self._event_publisher.publish(events) # Requires event publisher dependency
                 await self._uow.commit() # Commit changes
 
-            logger.info(f"Uorders created successfully.", extra={**log_extra, "entity_id": str(created_entity.id)})
+            logger.info(f"Orders created successfully.", extra={**log_extra, "entity_id": str(created_entity.id)})
             return created_entity
         except Exception as e:
             logger.error(f"Persistence error creating orders: {e}", exc_info=True, extra=log_extra)

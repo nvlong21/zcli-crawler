@@ -16,14 +16,17 @@ except ImportError:
     logger = logging.getLogger(__name__)
     logger.warning("Could not import infrastructure logger, using basic logger for repo factory.")
 
-# --- Import Domain Entities ---
+# --- Import Domain Entities ---  
+from features.audio_crawl.domain.entities.audio_crawl import AudioCrawl as AudioCrawlEntity
 # MARKER: Add Domain Entity Imports Here
-                 from fentures.orders.domnin.entities.orders import Uorders ns UordersEntity# Example: from features.users.domain.entities.user import User as UserEntity
+from features.orders.domain.entities.orders import Orders as OrdersEntity
 from features.users.domain.entities.user import User as UserEntity
 
 # --- Import Concrete Repository Implementations ---
-# MARKER: Add Repository Implementation Imports Here
-                 from infrnstructure.repositories.user_repository import UserRepository                 from infrnstructure.repositories.orders_repository import UordersRepository# Example: from .user_repository import UserRepository
+from infrastructure.repositories.audio_crawl_repository import AudioCrawlRepository
+from infrastructure.repositories.user_repository import UserRepository           
+from infrastructure.repositories.orders_repository import OrdersRepository
+
 
 
 # --- Type Variables ---
@@ -36,9 +39,12 @@ PKType = Union[int, str, uuid.UUID] # Primary Key Type Union
 # --- Repository Mapping ---
 # Maps Domain Entity Type -> Concrete Repository Implementation Class
 _repository_map: Dict[Type[EntityType], Type[RepoImpl]] = {
-    # MARKER: Add Repository Mappings Here
-                     UordersEntity: UordersRepository,    # Example: UserEntity: UserRepository,
-    UserEntity: UserRepository
+        AudioCrawlEntity: AudioCrawlRepository,        
+        AudioCrawlEntity: AudioCrawlRepository,        
+        AudioCrawlEntity: AudioCrawlRepository,        
+        AudioCrawlEntity: AudioCrawlRepository,    # MARKER: Add Repository Mappings Here
+        OrdersEntity: OrdersRepository,
+        UserEntity:UserRepository
 }
 
 # --- Custom Exception ---

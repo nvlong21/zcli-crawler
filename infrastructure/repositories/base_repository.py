@@ -128,7 +128,8 @@ class BaseRepository(BaseRepositoryInterface[ModelType, EntityType]): # Removed 
         logger.debug(f"Getting all {self.model_class.__name__} (skip={skip}, limit={limit})")
         stmt = select(self.model_class).offset(skip).limit(limit)
         order_by_attr = getattr(self.model_class, 'id', getattr(self.model_class, 'created_at', None))
-        if order_by_attr is not None: stmt = stmt.order_by(order_by_attr)
+        if order_by_attr is not None:
+            stmt = stmt.order_by(order_by_attr)
 
         if self._is_async:
             result = await self._db.execute(stmt) # type: ignore

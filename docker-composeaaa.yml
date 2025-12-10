@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+
+  web:
+    build: ./
+    ports:
+      - 8008:8008
+    command: ffmpeg
+    volumes:
+      - ./:/usr/src/app
+    env_file:
+      - .env

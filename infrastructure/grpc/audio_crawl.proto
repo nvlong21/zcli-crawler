@@ -1,0 +1,55 @@
+// infrastructure/grpc/audio_crawl.proto
+syntax = "proto3";
+
+package audio_crawl.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// Service Definition
+service AudioCrawlService {
+  rpc CreateAudioCrawl(CreateAudioCrawlRequest) returns (AudioCrawlResponse);
+  rpc GetAudioCrawl(GetAudioCrawlRequest) returns (AudioCrawlResponse);
+  rpc ListAudioCrawls(ListAudioCrawlsRequest) returns (ListAudioCrawlsResponse);
+  rpc UpdateAudioCrawl(UpdateAudioCrawlRequest) returns (AudioCrawlResponse);
+  rpc DeleteAudioCrawl(DeleteAudioCrawlRequest) returns (google.protobuf.Empty);
+}
+
+// TODO: Điền các message definitions tương ứng với các trường của bạn
+message AudioCrawl {
+  string id = 1; // UUID as string
+  // Ví dụ: string name = 2;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message CreateAudioCrawlRequest {
+  // Ví dụ: string name = 1;
+}
+
+message GetAudioCrawlRequest {
+  string id = 1;
+}
+
+message AudioCrawlResponse {
+  AudioCrawl audio_crawl = 1;
+}
+
+message ListAudioCrawlsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListAudioCrawlsResponse {
+  repeated AudioCrawl audio_crawls = 1;
+  string next_page_token = 2;
+}
+
+message UpdateAudioCrawlRequest {
+  string id = 1;
+  // Ví dụ: optional string name = 2;
+}
+
+message DeleteAudioCrawlRequest {
+  string id = 1;
+}

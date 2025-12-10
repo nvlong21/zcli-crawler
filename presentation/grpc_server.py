@@ -28,11 +28,11 @@ except ImportError:
     _fallback_grpc_server_cert_path = None
 
 # --- gRPC Servicer Imports ---
-# MARKER: Add gRPC Servicer Imports Here
+    # from features.audio_crawl.presentation.grpc.audio_crawl_service import AudioCrawlServicer    # from features.audio_crawl.presentation.grpc.audio_crawl_service import AudioCrawlServicer    # from features.audio_crawl.presentation.grpc.audio_crawl_service import AudioCrawlServicer    # from features.audio_crawl.presentation.grpc.audio_crawl_service import AudioCrawlServicer# MARKER: Add gRPC Servicer Imports Here
 # Example: from features.users.presentation.grpc.users_service import UserServicer
 
 # --- gRPC Stub Registration Imports ---
-# MARKER: Add gRPC Stub Registration Imports Here
+    # from infrastructure.grpc import audio_crawl_pb2_grpc    # from infrastructure.grpc import audio_crawl_pb2_grpc    # from infrastructure.grpc import audio_crawl_pb2_grpc    # from infrastructure.grpc import audio_crawl_pb2_grpc# MARKER: Add gRPC Stub Registration Imports Here
 # Example: from infrastructure.grpc import users_pb2_grpc
 
 
@@ -42,7 +42,7 @@ _stop_event = asyncio.Event()
 
 # --- Service Registration List (Populated by Markers) ---
 _GRPC_SERVICES_TO_REGISTER: List[Tuple[Callable[[Any, grpc.aio.Server], None], Any]] = [
-    # MARKER: Add Servicer Registration Tuples Here
+        # (audio_crawl_pb2_grpc.add_AudioCrawlServiceServicer_to_server, AudioCrawlServicer()),        # (audio_crawl_pb2_grpc.add_AudioCrawlServiceServicer_to_server, AudioCrawlServicer()),        # (audio_crawl_pb2_grpc.add_AudioCrawlServiceServicer_to_server, AudioCrawlServicer()),        # (audio_crawl_pb2_grpc.add_AudioCrawlServiceServicer_to_server, AudioCrawlServicer()),    # MARKER: Add Servicer Registration Tuples Here
     # Example: (users_pb2_grpc.add_UserServiceServicer_to_server, UserServicer(dependencies...)),
 ]
 
